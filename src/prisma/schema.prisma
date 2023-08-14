@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                  @id @default(uuid())
+  username              String                  @unique
+  email                 String                  @unique
+  password              String
+  profilePhotoUrl       String?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  podcastLists          PodcastList[]           @relation("CreatedPodcasts")
+  likedPodcasts         PodcastLikes[]
+  followingPodcastLists FollowingPodcastLists[]
+  playlists             Playlist[]
+}
+
+model PodcastList {
+  id               String                  @id @default(uuid())
+  title            String
+  description      String
+  imageUrl         String
+  isActive         Boolean                 @default(true)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  creator          User                    @relation("CreatedPodcasts", fields: [creatorId], references: [id])
+  creatorId        String
+  podcasts         Podcast[]
+  categories       Category[]
+  followingByUsers FollowingPodcastLists[]
+}
+
+model Podcast {
+  id            String             @id @default(uuid())
+  title         String
+  description   String
+  imageUrl      String
+  podcastUrl    String
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  podcastList   PodcastList        @relation(fields: [podcastListId], references: [id])
+  podcastListId String
+  likedByUsers  PodcastLikes[]
+  playlists     PlaylistPodcasts[]
+}
+
+model Category {
+  id       String        @id @default(uuid())
+  name     String
+  podcasts PodcastList[]
+}
+
+model PodcastLikes {
+  podcast   Podcast @relation(fields: [podcastId], references: [id])
+  podcastId String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@id([podcastId, userId])
+  @@unique([podcastId, userId])
+}
+
+model FollowingPodcastLists {
+  podcastList   PodcastList @relation(fields: [podcastListId], references: [id])
+  podcastListId String
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String
+
+  @@id([podcastListId, userId])
+  @@unique([podcastListId, userId])
+}
+
+model Playlist {
+  id          String             @id @default(uuid())
+  title       String
+  description String
+  imageUrl    String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  creator     User               @relation(fields: [userId], references: [id])
+  userId      String
+  podcasts    PlaylistPodcasts[]
+}
+
+model PlaylistPodcasts {
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  playlistId String
+  podcast    Podcast  @relation(fields: [podcastId], references: [id])
+  podcastId  String
+
+  @@id([playlistId, podcastId])
+  @@unique([playlistId, podcastId])
+}
