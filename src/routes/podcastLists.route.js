@@ -1,34 +1,38 @@
-const express = require('express');
-const router = express.Router();
-const PodcastListController = require('../controllers/podcastListController');
-const auth = require('../middlewares/auth');
+const express = require('express')
+const router = express.Router()
+const PodcastListController = require('../controllers/podcastListController')
+const auth = require('../middlewares/auth')
 
-router.get('/', auth, PodcastListController.getPodcastLists);
+router.get('/', auth, PodcastListController.getPodcastLists)
 
-router.get('/search', auth, PodcastListController.searchPodcastLists);
+router.get('/search', auth, PodcastListController.searchPodcastLists)
 
-router.get('/:id/podcasts', auth, PodcastListController.getPodcastsByListID);
+router.get('/:id/podcasts', auth, PodcastListController.getPodcastsByListID)
 
-router.get('/:id/followers', auth, PodcastListController.getFollowersByListID);
+router.get('/:id/followers', auth, PodcastListController.getFollowersByListID)
 
-router.post('/:id/follow', auth, PodcastListController.followPodcastList);
+router.post('/:id/follow', auth, PodcastListController.followPodcastList)
 
-router.delete('/:id/unfollow', auth, PodcastListController.unfollowPodcastList);
+router.delete('/:id/unfollow', auth, PodcastListController.unfollowPodcastList)
 
-router.post('/', auth, PodcastListController.createPodcastList);
+router.post('/', auth, PodcastListController.createPodcastList)
 
-router.post('/:id/podcasts', auth, PodcastListController.createPodcast);
+router.put('/:id', auth, PodcastListController.updatePodcastList)
 
-router.put('/:id', auth, PodcastListController.updatePodcastList);
+router.delete('/:id', auth, PodcastListController.deletePodcastList)
 
-router.put('/:podcastListID/:podcastID', auth, PodcastListController.updatePodcast);
+router.get('/image-presigned-url', auth, PodcastListController.getImageSignedUrl)
 
-router.delete('/:id', auth, PodcastListController.deletePodcastList);
+router.get('/podcast-presigned-url', auth, PodcastListController.getPodcastSignedUrl)
 
-router.delete('/:podcastListID/:podcastID', auth, PodcastListController.deletePodcast);
+router.get('/:id/comments', auth, PodcastListController.getComments)
 
-router.get('/image-presigned-url', auth, PodcastListController.getImageSignedUrl);
+router.post('/:id/comments', auth, PodcastListController.createComment)
 
-router.get('/podcast-presigned-url', auth, PodcastListController.getPodcastSignedUrl);
+router.put('/:id/comments/:commentId', auth, PodcastListController.updateComment)
 
-module.exports = router;
+router.delete('/:id/comments/:commentId', auth, PodcastListController.deleteComment)
+
+router.get('/:id', auth, PodcastListController.getPodcastListByID)
+
+module.exports = router
