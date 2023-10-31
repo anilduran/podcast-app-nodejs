@@ -1,14 +1,18 @@
-const express = require('express');
-const router = express.Router();
-const CategoryController = require('../controllers/category.controller');
-const auth = require('../middlewares/auth');
+const express = require('express')
+const router = express.Router()
+const CategoryController = require('../controllers/category.controller')
+const auth = require('../middlewares/auth')
 
-router.get('/', auth, CategoryController.getCategories);
+router.get('/', auth, CategoryController.getCategories)
 
-router.get('/:id', CategoryController.getCategoryByID);
+router.get('/:id', auth, CategoryController.getCategoryByID)
 
-router.get('/:id/podcast-lists', CategoryController.getPodcastListsByCategoryID);
+router.post('/', auth, CategoryController.createCategory)
 
-router.post('/', CategoryController.addCategory);
+router.put('/:id', auth, CategoryController.updateCategory)
 
-module.exports = router;
+router.delete('/:id', auth, CategoryController.deleteCategory)
+
+router.get('/:id/podcast-lists', auth, CategoryController.getPodcastListsByCategoryID)
+
+module.exports = router

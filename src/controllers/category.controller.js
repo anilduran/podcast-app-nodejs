@@ -1,17 +1,17 @@
-const prisma = require('../database/prisma');
+const prisma = require('../database/prisma')
 
 class CategoryController {
 
 
     static async getCategories(req, res, next) {
         try {
-            const categories = await prisma.category.findMany();
-            res.status(200).json(categories);
+            const categories = await prisma.category.findMany()
+            return res.status(200).json(categories)
 
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
@@ -23,12 +23,12 @@ class CategoryController {
                         equals: req.params.id
                     }
                 }
-            });
-            res.status(200).json(category);
+            })
+            return res.status(200).json(category)
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
@@ -43,35 +43,91 @@ class CategoryController {
                         }
                     }
                 }
-            });
+            })
 
-            res.status(200).json(podcastLists);
+            return res.status(200).json(podcastLists)
 
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
-    static async addCategory(req, res, next) {
+    static async createCategory(req, res, next) {
         try {
 
             const category = await prisma.category.create({
                 data: {
-                    name: req.body.name
+                    name: req.body.name,
+                    description: req.body.description,
+                    imageUrl: req.body.imageUrl
                 }
-            });
-            res.status(201).json(category);
+            })
+            return res.status(201).json(category)
 
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
+    static async updateCategory(req, res, next) {
+        try {
+ 
+            let willBeUpdatedAttributes = {}
+
+            
+            if (req.body.name) {
+                willBeUpdatedAttributes.name = req.body.name
+            }
+
+            if (req.body.description) {
+                willBeUpdatedAttributes.description = req.body.description
+            }
+
+            if (req.body.imageUrl) {
+                willBeUpdatedAttributes.imageUrl = req.body.imageUrl
+            }
+
+            const result = await prisma.category.update({
+                data: {
+                    ...willBeUpdatedAttributes
+                },
+                where: {
+                    id: req.params.id
+                }
+            })
+
+            return res.status(200).json(result)
+
+
+        } catch(error) {
+            return res.status(500).json({
+                message: 'Unexpected error!'
+            })
+        }
+    }
+
+    static async deleteCategory(req, res, next) {
+        try {
+
+            const result = await prisma.category.delete({
+                where: {
+                    id: req.params.id
+                }
+            })
+
+            return res.status(200).json(result)
+
+        } catch(error) {
+            return res.status(500).json({
+                message: 'Unexpected error!'
+            })
+        }
+    }
 
 }
 
-module.exports = CategoryController;
+module.exports = CategoryController
