@@ -1,17 +1,23 @@
-const express = require('express');
-const router = express.Router();
-const PlaylistController = require('../controllers/playlist.controller');
-const auth = require('../middlewares/auth');
+const express = require('express')
+const router = express.Router()
+const PlaylistController = require('../controllers/playlist.controller')
+const auth = require('../middlewares/auth')
 
-router.post('/', auth, PlaylistController.createPlaylist);
+router.get('/', auth, PlaylistController.getPlaylists)
 
-router.put('/:id', auth, PlaylistController.updatePlaylist);
+router.get('/:id', auth, PlaylistController.getPlaylistByID)
 
-router.delete('/:id', auth, PlaylistController.deletePlaylist);
+router.get('/:id/podcasts', auth, PlaylistController.getPodcastsByPlaylistID)
 
-router.post('/:id/add-podcast', auth, PlaylistController.addPodcast);
+router.post('/', auth, PlaylistController.createPlaylist)
 
-router.delete('/:id/remove-podcast', auth, PlaylistController.removePodcast);
+router.put('/:id', auth, PlaylistController.updatePlaylist)
+
+router.delete('/:id', auth, PlaylistController.deletePlaylist)
+
+router.post('/:id/add-podcast', auth, PlaylistController.addPodcast)
+
+router.delete('/:id/remove-podcast', auth, PlaylistController.removePodcast)
 
 
-module.exports = router;
+module.exports = router
