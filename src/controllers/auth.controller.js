@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const prisma = require('../database/prisma');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const prisma = require('../database/prisma')
 
 class AuthController {
 
@@ -13,16 +13,15 @@ class AuthController {
                         equals: req.body.email
                     }
                 }
-            });
+            })
     
             if (!user) {
-                res.status(400).json({
+                return res.status(400).json({
                     message: 'User was not found!'
-                });
-                return;
+                })
             }
     
-            const { id, username, email, password } = user;
+            const { id, username, email, password } = user
     
             if (await bcrypt.compare(req.body.password, password)) {
                 const token = jwt.sign(
@@ -35,22 +34,20 @@ class AuthController {
                     {
                         expiresIn: '24h'
                     }
-                );
+                )
     
-                res.status(200).json({
-                    message: 'successfull!',
+                return res.status(200).json({
                     token
-                });
+                })
             } else {
-                res.status(400).json({
+                return res.status(400).json({
                     message: 'Password is wrong!'
-                });
+                })
             }
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            });
+            })
         }
 
 
@@ -65,34 +62,30 @@ class AuthController {
                     { email: { equals: req.body.email } }
                 ]
             }
-        });
+        })
 
         if (user) {
-            res.status(400).json({
+            return res.status(400).json({
                 message: 'User already exists!'
-            });
-            return;
+            })
         } 
 
-        const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+        const encryptedPassword = await bcrypt.hash(req.body.password, 10)
 
-        const { username, email } = req.body;
+        const { username, email } = req.body
 
         const result = await prisma.user.create({
-            data: {
+            data: {
                 username: username,
                 email: email,
                 password: encryptedPassword
             }
-        });
-
-        console.log(result.id);
+        })
 
         if (!result) {
-            res.status(400).json({
+            return res.status(400).json({
                 message: 'Unexpected error!'
-            });
-            return;
+            })
         }
 
         const token = jwt.sign(
@@ -105,15 +98,16 @@ class AuthController {
             {
                 expiresIn: '24h'
             }
-        );
+        ) 
 
-        res.status(201).json({
-            message: 'Successfull!',
+        return res.status(201).json({
             token
-        });
+        }) 
 
     }
 
 }
 
-module.exports = AuthController;
+module.exports = AuthController 
+
+
