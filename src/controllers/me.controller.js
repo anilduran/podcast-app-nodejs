@@ -1,9 +1,9 @@
-const prisma = require('../database/prisma');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const prisma = require('../database/prisma')
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+const { v4: uuidv4 } = require('uuid')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 class MeController {
     
@@ -19,38 +19,38 @@ class MeController {
                     email: true,
                     profilePhotoUrl: true
                 }
-            });
+            })
 
         
-            res.status(200).json(account);
+            return res.status(200).json(account)
         
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
     static async updateAccount(req, res, next) {
         try {
 
-            let params = {};
+            let params = {}
 
             if (req.body.username) {
-                params.username = req.body.username;
+                params.username = req.body.username
             }
 
             if (req.body.email) {
-                params.email = req.body.email;
+                params.email = req.body.email
             }   
 
             if (req.body.password) {
-                const encrypedPassword = await bcrypt.hash(req.body.password, 10);
-                params.password = encrypedPassword;
+                const encrypedPassword = await bcrypt.hash(req.body.password, 10)
+                params.password = encrypedPassword
             }
 
             if (req.body.profilePhotoUrl) {
-                params.profilePhotoUrl = req.body.profilePhotoUrl;
+                params.profilePhotoUrl = req.body.profilePhotoUrl
             }
 
             const account = await prisma.user.update({
@@ -66,36 +66,33 @@ class MeController {
                     email: true,    
                     profilePhotoUrl: true
                 }
-            });
+            })
 
-            res.status(200).json(account);
+            return res.status(200).json(account)
 
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
     }
 
     static async getPodcastLists(req, res, next) {
         try {
             const podcastLists = await prisma.podcastList.findMany({
-                include: {
-                    creator: true
-                },
                 where: {
                     creator: {
                         id: req.user.id
                     }
                 }
-            });
+            })
             
-            res.status(200).json(podcastLists);
+            return res.status(200).json(podcastLists)
 
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            }) 
         }
 
     }
@@ -107,18 +104,18 @@ class MeController {
                 where: {
                     podcastListId: req.params.id
                 }
-            });
+            })
 
-            res.status(200).json(podcasts);
+            return res.status(200).json(podcasts)
 
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            }); 
+            })
         }
     }
 
-    static async getFollowingPodcasts(req, res, next) {
+    static async getFollowingPodcastLists(req, res, next) {
         try {
 
             
@@ -129,18 +126,15 @@ class MeController {
                             userId: req.user.id,
                         }
                     }
-                },
-                include: {
-                    creator: true
                 }
-            });
+            })
 
-            res.status(200).json(podcastLists);
+            return res.status(200).json(podcastLists)
 
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            });
+            })
         }
     }
 
@@ -161,14 +155,14 @@ class MeController {
                         }
                     },
                 },
-            });
+            })
 
-            res.status(200).json(podcasts);
+            return res.status(200).json(podcasts)
 
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            });
+            })
         }
     }
 
@@ -176,22 +170,19 @@ class MeController {
         try {
 
             const playlists = await prisma.playlist.findMany({
-                include: {
-                    PlaylistPodcasts: true
-                },
                 where: {
                     creator: {
                         id: req.user.id
                     }
                 }
-            });
+            })
 
-            res.status(200).json(playlists);
+            return res.status(200).json(playlists)
 
         } catch(error) {
-            res.status(500).json({
+            return res.status(500).json({
                 message: 'Unexpected error!'
-            });
+            })
         }
     }
 
@@ -203,4 +194,4 @@ class MeController {
 
 }
 
-module.exports = MeController;
+module.exports = MeController
